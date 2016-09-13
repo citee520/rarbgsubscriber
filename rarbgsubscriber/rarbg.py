@@ -27,6 +27,7 @@ class Rarbg(object):  # pylint: disable=too-few-public-methods
     def __init__(self):
         # TODO: how to pass bot check
         self._cookie = 'c_cookie=ljd3gcszby; expla2=1%7CSat%2C%2005%20Mar%202016%2021%3A46%3A26%20GMT; LastVisit=1457192974; vDVPaqSe=r9jSB2Wk; expla=2; tcc; __utma=9515318.355702320.1444490883.1457101385.1457192786.76; __utmb=9515318.4.10.1457192786; __utmc=9515318; __utmz=9515318.1447162163.12.4.utmcsr=google|utmccn=(organic)|utmcmd=organic|utmctr=(not%20provided)'
+		
         self._host = 'http://rarbg.to'
 
     def conn(self, uri, query=None):
@@ -190,7 +191,7 @@ class RarbgPager(Rarbg):
         LOG.debug("Page %s", self._current_index)
         resp = self._query()
         self._page = TorrentListPage(self._host, resp)
-        self._current_index = self._get_next_index(resp)
+        #self._current_index = self._get_next_index(resp)
         return self._page
 
 
@@ -295,25 +296,23 @@ class RarbgSubscriber(Daemon):
         for page in self._pager:
             if stop:
                 break
-
             for torrent in page:
                 if torrent is None:
-                    continue
-
-                if not self._filter.filter(torrent):
-                    LOG.debug("Skip %s", torrent)
-                    continue
-
-                info = self._convert_to_movie_info(torrent)
-                if self._pool.find(info.href) is not None:
-                    # FIXME: ugly
-                    stop = True
-                    LOG.info("duplication torrent, stop")
-                    break
-
-                LOG.info("New torrent %s", info)
-                self._pool.insert(info)
-                self._handlers.register(info)
+                    continue                
+                #if not self._filter.filter(torrent):
+                #    LOG.debug("Skip %s", torrent)
+                #    continue
+                #
+                #info = self._convert_to_movie_info(torrent)
+                #if self._pool.find(info.href) is not None:
+                #    # FIXME: ugly
+                #    stop = True
+                #    LOG.info("duplication torrent, stop")
+                #    break
+				
+                #LOG.info("New torrent %s", info)
+                #self._pool.insert(info)
+                #self._handlers.register(info)
 
         self._handlers.submit()
         LOG.info("Crawl done")
